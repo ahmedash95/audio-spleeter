@@ -1,0 +1,32 @@
+version: '2'
+services:
+  webserver:
+    image: nginx:alpine
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    ports:
+      - "8080:80"
+      - "443:443"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    working_dir: /var/www
+
+  db:
+    image: mysql:5.7
+    ports:
+      - "3388:3306"
+    volumes:
+      - ./data/db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: audispletter
+      MYSQL_ROOT_PASSWORD: root
+  redis:
+    image: redis
+    volumes:
+      - ./data/redis:/data
